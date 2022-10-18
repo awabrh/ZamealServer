@@ -2,6 +2,7 @@ import { __prod__ } from "./constants";
 import { Post } from "./entities/Post";
 import { MikroORM } from "@mikro-orm/core";
 import path from "path";
+import { User } from "./entities/User";
 
 type config = Parameters<typeof MikroORM.init>[0];
 
@@ -9,7 +10,7 @@ export default {
   migrations: {
     path: path.join(__dirname, "./migrations"),
   },
-  entities: [Post],
+  entities: [Post, User],
   dbName: "zameal",
   user: "postgres",
   password: "postgres",
