@@ -3,6 +3,7 @@ import { User } from "../entities/User";
 import {
   Resolver,
   Mutation,
+  Query,
   Arg,
   InputType,
   Field,
@@ -40,10 +41,19 @@ class UserResponse {
 
 @Resolver()
 export class UserResolver {
+  @Query(() => User, { nullable: true })
+  async me(@Ctx() { req, em }: myContext): Promise<User | null> {
+    if (!req.session.userId) {
+      return null;
+    }
+    const user = await em.findOne(User, { id: req.session.userId });
+    return user;
+  }
+
   @Mutation(() => UserResponse)
   async register(
     @Arg("options") options: EmailPasswordInput,
-    @Ctx() { em }: myContext
+    @Ctx() { em, req }: myContext
   ): Promise<UserResponse> {
     if (options.email.length <= 2) {
       return {
@@ -88,6 +98,9 @@ export class UserResolver {
         };
       }
     }
+
+    req.session.userId = user.id;
+
     return {
       user: user,
     };
@@ -96,7 +109,7 @@ export class UserResolver {
   @Mutation(() => UserResponse)
   async login(
     @Arg("options") options: EmailPasswordInput,
-    @Ctx() { em }: myContext
+    @Ctx() { em, req }: myContext
   ): Promise<UserResponse> {
     const user = await em.findOne(User, { email: options.email });
     if (!user) {
@@ -120,6 +133,8 @@ export class UserResolver {
         ],
       };
     }
+
+    req.session.userId = user.id;
 
     return {
       user: user,
