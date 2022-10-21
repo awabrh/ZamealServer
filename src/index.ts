@@ -59,7 +59,7 @@ const main = async () => {
   });
 
   app.listen(4000, () => {
-    console.log("server started on local host:4000");
+    console.log("server started on localhost:4000");
   });
 };
 
