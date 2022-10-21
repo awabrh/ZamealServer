@@ -59,7 +59,7 @@ export class UserResolver {
       return {
         errors: [
           {
-            field: "Email",
+            field: "email",
             message: "Email cannot be shorter than 2 letters",
           },
         ],
@@ -70,7 +70,7 @@ export class UserResolver {
       return {
         errors: [
           {
-            field: "Password",
+            field: "password",
             message: "Password cannot be shorter than 2 letters",
           },
         ],
@@ -91,7 +91,7 @@ export class UserResolver {
         return {
           errors: [
             {
-              field: "Email",
+              field: "email",
               message: "Account already exists",
             },
           ],
@@ -116,7 +116,7 @@ export class UserResolver {
       return {
         errors: [
           {
-            field: "Email",
+            field: "email",
             message: "This account doesn't exist",
           },
         ],
@@ -127,7 +127,7 @@ export class UserResolver {
       return {
         errors: [
           {
-            field: "Password",
+            field: "password",
             message: "Invalid Password",
           },
         ],
