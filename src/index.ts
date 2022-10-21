@@ -14,8 +14,11 @@ import connectRedis from "connect-redis";
 import { createClient } from "redis";
 import { myContext } from "./types";
 import cors from "cors";
+import { sendEmail } from "./utils/sendEmail";
 
 const main = async () => {
+  sendEmail("awabrh@gmail.com", "hello there");
+
   const orm = await MikroORM.init(mikroOrmConfig);
   orm.getMigrator().up();
   const emFork = orm.em.fork();
