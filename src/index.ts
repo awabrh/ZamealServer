@@ -1,24 +1,21 @@
-import "reflect-metadata";
 import { MikroORM } from "@mikro-orm/core";
-import { COOKIE_NAME, __prod__ } from "./constants";
-import mikroOrmConfig from "./mikro-orm.config";
-import express from "express";
-import { ApolloServer } from "apollo-server-express";
-import { buildSchema } from "type-graphql";
-import { HelloResolver } from "./resolvers/hello";
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
+import { ApolloServer } from "apollo-server-express";
+import connectRedis from "connect-redis";
+import cors from "cors";
+import express from "express";
+import session from "express-session";
+import Redis from "ioredis";
+import "reflect-metadata";
+import { buildSchema } from "type-graphql";
+import { COOKIE_NAME } from "./constants";
+import mikroOrmConfig from "./mikro-orm.config";
+import { HelloResolver } from "./resolvers/hello";
 import { PostResolver } from "./resolvers/post";
 import { UserResolver } from "./resolvers/user";
-import session from "express-session";
-import connectRedis from "connect-redis";
-import { createClient } from "redis";
 import { myContext } from "./types";
-import cors from "cors";
-import { sendEmail } from "./utils/sendEmail";
 
 const main = async () => {
-  sendEmail("awabrh@gmail.com", "hello there");
-
   const orm = await MikroORM.init(mikroOrmConfig);
   orm.getMigrator().up();
   const emFork = orm.em.fork();
@@ -26,8 +23,7 @@ const main = async () => {
   const app = express();
 
   let RedisStore = connectRedis(session);
-  const redisClient = createClient({ legacyMode: true });
-  await redisClient.connect().catch(console.error);
+  const redis = new Redis();
 
   app.use(
     cors({
@@ -39,7 +35,7 @@ const main = async () => {
   app.use(
     session({
       name: COOKIE_NAME,
-      store: new RedisStore({ client: redisClient, disableTouch: true }),
+      store: new RedisStore({ client: redis, disableTouch: true }),
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 365 * 10,
         httpOnly: true,
@@ -57,7 +53,7 @@ const main = async () => {
       resolvers: [HelloResolver, PostResolver, UserResolver],
       validate: false,
     }),
-    context: ({ req, res }): myContext => ({ em: emFork, req, res }),
+    context: ({ req, res }): myContext => ({ em: emFork, req, res, redis }),
     plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
   });
 
