@@ -32,7 +32,7 @@ export class UserResolver {
   async changePassword(
     @Arg("token") token: string,
     @Arg("newPassword") newPassword: string,
-    @Ctx() { redis, em, req }: myContext
+    @Ctx() { redis, req }: myContext
   ): Promise<UserResponse> {
     if (newPassword.length <= 2) {
       return {
@@ -58,7 +58,8 @@ export class UserResolver {
       };
     }
 
-    const user = await em.findOne(User, { id: parseInt(userId) });
+    const id = parseInt(userId);
+    const user = await User.findOneBy({ id: id });
 
     if (!user) {
       return {
@@ -71,8 +72,8 @@ export class UserResolver {
       };
     }
 
-    user.password = await argon2.hash(newPassword);
-    await em.persistAndFlush(user);
+    const hashedPassword = await argon2.hash(newPassword);
+    await User.update({ id: id }, { password: hashedPassword });
 
     await redis.del(key);
 
@@ -86,9 +87,9 @@ export class UserResolver {
   @Mutation(() => Boolean)
   async forgotPassword(
     @Arg("email") email: string,
-    @Ctx() { em, redis }: myContext
+    @Ctx() { redis }: myContext
   ) {
-    const user = await em.findOne(User, { email });
+    const user = await User.findOneBy({ email: email });
     if (!user) {
       return true;
     }
@@ -110,18 +111,17 @@ export class UserResolver {
   }
 
   @Query(() => User, { nullable: true })
-  async me(@Ctx() { req, em }: myContext): Promise<User | null> {
+  me(@Ctx() { req }: myContext) {
     if (!req.session.userId) {
       return null;
     }
-    const user = await em.findOne(User, { id: req.session.userId });
-    return user;
+    return User.findOneBy({ id: req.session.userId });
   }
 
   @Mutation(() => UserResponse)
   async register(
     @Arg("options") options: EmailPasswordInput,
-    @Ctx() { em, req }: myContext
+    @Ctx() { req }: myContext
   ): Promise<UserResponse> {
     const errors = validateRegister(options);
     if (errors) {
@@ -129,15 +129,15 @@ export class UserResolver {
     }
 
     const hashedPassword = await argon2.hash(options.password);
-
-    const user = em.create(User, {
-      email: options.email.toLowerCase(),
-      password: hashedPassword,
-    });
+    let user;
 
     try {
-      await em.persistAndFlush(user);
+      user = await User.create({
+        email: options.email.toLowerCase(),
+        password: hashedPassword,
+      }).save();
     } catch (err) {
+      console.log(err);
       if (err.code === "23505") {
         return {
           errors: [
@@ -147,10 +147,20 @@ export class UserResolver {
             },
           ],
         };
+      } else {
+        return {
+          errors: [
+            {
+              field: "email",
+              message: "Unknown server error",
+            },
+          ],
+        };
       }
     }
 
     req.session.userId = user.id;
+    console.log(user);
 
     return {
       user: user,
@@ -160,9 +170,9 @@ export class UserResolver {
   @Mutation(() => UserResponse)
   async login(
     @Arg("options") options: EmailPasswordInput,
-    @Ctx() { em, req }: myContext
+    @Ctx() { req }: myContext
   ): Promise<UserResponse> {
-    const user = await em.findOne(User, { email: options.email });
+    const user = await User.findOneBy({ email: options.email });
     if (!user) {
       return {
         errors: [

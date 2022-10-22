@@ -1,4 +1,3 @@
-import { MikroORM } from "@mikro-orm/core";
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
 import { ApolloServer } from "apollo-server-express";
 import connectRedis from "connect-redis";
@@ -9,16 +8,26 @@ import Redis from "ioredis";
 import "reflect-metadata";
 import { buildSchema } from "type-graphql";
 import { COOKIE_NAME } from "./constants";
-import mikroOrmConfig from "./mikro-orm.config";
 import { HelloResolver } from "./resolvers/hello";
 import { PostResolver } from "./resolvers/post";
 import { UserResolver } from "./resolvers/user";
 import { myContext } from "./types";
+import { DataSource } from "typeorm";
+import { Post } from "./entities/Post";
+import { User } from "./entities/User";
 
 const main = async () => {
-  const orm = await MikroORM.init(mikroOrmConfig);
-  orm.getMigrator().up();
-  const emFork = orm.em.fork();
+  const conn = new DataSource({
+    type: "postgres",
+    database: "zameal2",
+    username: "postgres",
+    password: "postgres",
+    logging: true,
+    synchronize: true,
+    entities: [Post, User],
+  });
+
+  await conn.initialize().catch((error) => console.log(error));
 
   const app = express();
 
@@ -53,7 +62,7 @@ const main = async () => {
       resolvers: [HelloResolver, PostResolver, UserResolver],
       validate: false,
     }),
-    context: ({ req, res }): myContext => ({ em: emFork, req, res, redis }),
+    context: ({ req, res }): myContext => ({ req, res, redis }),
     plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
   });
 
