@@ -15,6 +15,38 @@ export class Post extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @Field()
+  @Column({ type: "text", nullable: false })
+  carModel: string;
+
+  @Field(() => Int)
+  @Column({ nullable: false })
+  numberOfSeats: number;
+
+  @Field()
+  @Column({ nullable: false })
+  isAcWorking: boolean;
+
+  @Field(() => String)
+  @Column({ type: "text", nullable: false })
+  locations: string;
+
+  @Field(() => Int)
+  @Column({ type: "text", nullable: false })
+  price: number;
+
+  @Field()
+  @Column({ nullable: false })
+  departure: string;
+
+  @Field()
+  @Column({ nullable: false })
+  arrival: string;
+
+  @Field(() => [String])
+  @Column({ nullable: false })
+  days: string;
+
   @Field(() => String)
   @CreateDateColumn()
   createdAt: Date;
@@ -22,8 +54,4 @@ export class Post extends BaseEntity {
   @Field(() => String)
   @UpdateDateColumn()
   updatedAt: Date;
-
-  @Field()
-  @Column({ type: "text", nullable: false })
-  title!: string;
 }

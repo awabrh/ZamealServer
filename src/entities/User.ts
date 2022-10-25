@@ -15,6 +15,33 @@ export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @Field()
+  @Column({ unique: true, type: "text" })
+  email!: string;
+
+  @Field()
+  @Column({ nullable: true })
+  name: string;
+
+  @Field()
+  @Column({ nullable: true })
+  dep: string;
+
+  @Field()
+  @Column({ nullable: true })
+  batch: string;
+
+  @Field()
+  @Column({ nullable: true })
+  address: string;
+
+  @Field()
+  @Column({ nullable: true })
+  mobile: string;
+
+  @Column({ type: "text" })
+  password!: string;
+
   @Field(() => String)
   @CreateDateColumn()
   createdAt: Date;
@@ -22,11 +49,4 @@ export class User extends BaseEntity {
   @Field(() => String)
   @UpdateDateColumn()
   updatedAt: Date;
-
-  @Field()
-  @Column({ unique: true, type: "text" })
-  email!: string;
-
-  @Column({ type: "text" })
-  password!: string;
 }
