@@ -25,8 +25,10 @@ class PostResponse {
 @Resolver()
 export class PostResolver {
   @Query(() => [Post])
-  posts(): Promise<Post[]> {
-    return Post.find();
+  async posts(): Promise<Post[]> {
+    const posts = Post.find();
+    // console.log(await posts);
+    return posts;
   }
 
   @Query(() => Post, { nullable: true })

@@ -43,7 +43,7 @@ export class Post extends BaseEntity {
   @Column({ nullable: false })
   arrival: string;
 
-  @Field(() => [String])
+  @Field(() => String)
   @Column({ nullable: false })
   days: string;
 
