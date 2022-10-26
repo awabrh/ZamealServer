@@ -16,6 +16,7 @@ import { validateRegister } from "../utils/validateRegister";
 import { FieldError } from "./FieldError";
 import { sendEmail } from "../utils/sendEmail";
 import { v4 } from "uuid";
+import { FullRegisterInput } from "./FullRegisterInput";
 
 @ObjectType()
 class UserResponse {
@@ -115,15 +116,17 @@ export class UserResolver {
     if (!req.session.userId) {
       return null;
     }
-    return User.findOne({
+    const user = User.findOne({
       where: { id: req.session.userId },
       relations: { post: true },
     });
+    console.log(user);
+    return user;
   }
 
   @Mutation(() => UserResponse)
   async register(
-    @Arg("options") options: EmailPasswordInput,
+    @Arg("options") options: FullRegisterInput,
     @Ctx() { req }: myContext
   ): Promise<UserResponse> {
     const errors = validateRegister(options);
@@ -136,6 +139,12 @@ export class UserResolver {
 
     try {
       user = await User.create({
+        name: options.name,
+        dep: options.dep,
+        batch: options.batch,
+        address: options.address,
+        gender: options.gender,
+        mobile: options.mobile,
         email: options.email.toLowerCase(),
         password: hashedPassword,
       }).save();

@@ -41,6 +41,10 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   mobile: string;
 
+  @Field()
+  @Column({ nullable: true })
+  gender: string;
+
   @Column({ type: "text" })
   password!: string;
 
