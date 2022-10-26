@@ -115,7 +115,10 @@ export class UserResolver {
     if (!req.session.userId) {
       return null;
     }
-    return User.findOneBy({ id: req.session.userId });
+    return User.findOne({
+      where: { id: req.session.userId },
+      relations: { post: true },
+    });
   }
 
   @Mutation(() => UserResponse)

@@ -12,6 +12,7 @@ import { FieldError } from "./FieldError";
 import { AddTarheelInput } from "./AddTarheelInput";
 import { myContext } from "src/types";
 import argon2 from "argon2";
+import { User } from "../entities/User";
 
 @ObjectType()
 class PostResponse {
@@ -32,19 +33,38 @@ export class PostResolver {
   }
 
   @Query(() => Post, { nullable: true })
-  post(@Arg("id") id: number): Promise<Post | null> {
-    return Post.findOneBy({ id });
+  async post(@Arg("id") id: number): Promise<Post | null> {
+    const post = await Post.findOne({
+      where: { id: id },
+      relations: { user: true },
+    });
+    console.log(post?.user);
+    return post;
   }
 
   @Mutation(() => Post)
   async createPost(
     @Arg("formInput") formInput: AddTarheelInput,
     @Ctx() { req }: myContext
-  ): Promise<PostResponse> {
+  ): Promise<Post | null> {
     let post;
+    let user: User | null;
+
+    // try {
+    user = await User.findOneBy({ id: req.session.userId });
+    // } catch (error) {
+    //   return {
+    //     errors: [
+    //       {
+    //         field: "name",
+    //         message: "unknown error",
+    //       },
+    //     ],
+    //   };
+    // }
 
     try {
-      post = await Post.create({
+      post = Post.create({
         carModel: formInput.carModel,
         numberOfSeats: formInput.numberOfSeats,
         isAcWorking: formInput.isAcWorking,
@@ -53,21 +73,23 @@ export class PostResolver {
         departure: formInput.departure,
         arrival: formInput.arrival,
         days: formInput.days.join(", "),
+        user: user ? user : undefined,
       }).save();
     } catch (error) {
-      return {
-        errors: [
-          {
-            field: "locations",
-            message: "unknown error",
-          },
-        ],
-      };
+      return null;
+      // return {
+      //   errors: [
+      //     {
+      //       field: "carModel",
+      //       message: "unknown error",
+      //     },
+      //   ],
+      // };
     }
 
-    return {
-      post,
-    };
+    console.log(post);
+
+    return post;
   }
 
   @Mutation(() => Post, { nullable: true })

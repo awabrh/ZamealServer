@@ -31,6 +31,9 @@ const main = async () => {
 
   const app = express();
 
+  // Post.delete({});
+  // User.delete({});
+
   // const post = await Post.create({
   //   carModel: "test",
   //   numberOfSeats: 3,

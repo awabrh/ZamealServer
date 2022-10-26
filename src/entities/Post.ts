@@ -5,8 +5,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   BaseEntity,
+  OneToOne,
+  JoinColumn,
 } from "typeorm";
 import { ObjectType, Field, Int } from "type-graphql";
+import { User } from "./User";
 
 @ObjectType()
 @Entity()
@@ -46,6 +49,11 @@ export class Post extends BaseEntity {
   @Field(() => String)
   @Column({ nullable: false })
   days: string;
+
+  @Field(() => User)
+  @OneToOne(() => User, (user) => user.post)
+  @JoinColumn()
+  user: User;
 
   @Field(() => String)
   @CreateDateColumn()
