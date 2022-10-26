@@ -26,7 +26,7 @@ class PostResponse {
 export class PostResolver {
   @Query(() => [Post])
   async posts(): Promise<Post[]> {
-    const posts = Post.find();
+    const posts = Post.find({ relations: { user: true } });
     // console.log(await posts);
     return posts;
   }
