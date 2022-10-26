@@ -11,7 +11,6 @@ import {
 import { FieldError } from "./FieldError";
 import { AddTarheelInput } from "./AddTarheelInput";
 import { myContext } from "src/types";
-import argon2 from "argon2";
 import { User } from "../entities/User";
 
 @ObjectType()
@@ -93,18 +92,11 @@ export class PostResolver {
   }
 
   @Mutation(() => Post, { nullable: true })
-  async updatePost(
-    @Arg("id") id: number,
-    @Arg("title", () => String, { nullable: true }) title: string
-  ): Promise<Post | null> {
+  async updatePost(@Arg("id") id: number): Promise<Post | null> {
     const post = await Post.findOneBy({ id });
     if (!post) {
       return null;
     }
-    // if (typeof title !== "undefined") {
-    //   post.title = title;
-    //   await Post.update({ id }, { title: title });
-    // }
     return post;
   }
 
