@@ -3,30 +3,6 @@ import { InputType, Field } from "type-graphql";
 @InputType()
 export class AddTarheelInput {
   @Field()
-  name: string;
-
-  @Field()
-  dep: string;
-
-  @Field()
-  batch: string;
-
-  @Field()
-  address: string;
-
-  @Field()
-  mobile: string;
-
-  @Field()
-  email: string;
-
-  @Field()
-  password: string;
-
-  @Field()
-  repeatPassword: string;
-
-  @Field()
   carModel: string;
 
   @Field()
