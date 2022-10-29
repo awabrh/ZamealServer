@@ -3,6 +3,9 @@ import { InputType, Field } from "type-graphql";
 @InputType()
 export class AddTarheelInput {
   @Field()
+  imageId: string;
+
+  @Field()
   carModel: string;
 
   @Field()

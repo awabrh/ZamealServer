@@ -22,6 +22,10 @@ export class Post extends BaseEntity {
   @Column({ type: "text", nullable: false })
   carModel: string;
 
+  @Field()
+  @Column({ type: "text", nullable: false })
+  imageId: string;
+
   @Field(() => Int)
   @Column({ nullable: false })
   numberOfSeats: number;

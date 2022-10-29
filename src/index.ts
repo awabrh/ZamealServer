@@ -34,17 +34,6 @@ const main = async () => {
   // Post.delete({});
   // User.delete({});
 
-  // const post = await Post.create({
-  //   carModel: "test",
-  //   numberOfSeats: 3,
-  //   isAcWorking: true,
-  //   locations: "locations, areas, stops, stuf",
-  //   price: 40000,
-  //   departure: "09:00",
-  //   arrival: "16:00",
-  //   days: "wednesday, monday, tuesday",
-  // }).save();
-
   let RedisStore = connectRedis(session);
   const redis = new Redis();
 

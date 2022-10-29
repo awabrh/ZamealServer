@@ -64,6 +64,7 @@ export class PostResolver {
 
     try {
       post = Post.create({
+        imageId: formInput.imageId,
         carModel: formInput.carModel,
         numberOfSeats: formInput.numberOfSeats,
         isAcWorking: formInput.isAcWorking,
