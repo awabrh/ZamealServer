@@ -12,6 +12,7 @@ import { FieldError } from "./FieldError";
 import { AddTarheelInput } from "./AddTarheelInput";
 import { myContext } from "src/types";
 import { User } from "../entities/User";
+import { Like } from "typeorm";
 
 @ObjectType()
 class PostResponse {
@@ -25,9 +26,18 @@ class PostResponse {
 @Resolver()
 export class PostResolver {
   @Query(() => [Post])
-  async posts(): Promise<Post[]> {
-    const posts = Post.find({ relations: { user: true } });
-    // console.log(await posts);
+  async posts(
+    @Arg("location", { nullable: true }) location: string
+  ): Promise<Post[]> {
+    let posts;
+    if (location) {
+      posts = Post.find({
+        where: { locations: Like(`%${location}%`) },
+        relations: { user: true },
+      });
+    } else {
+      posts = Post.find({ relations: { user: true } });
+    }
     return posts;
   }
 
