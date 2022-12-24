@@ -42,7 +42,7 @@ const main = async () => {
 
   app.use(
     cors({
-      origin: "http://zameal.vercel.app",
+      origin: process.env.ORIGIN,
       credentials: true,
     })
   );
