@@ -32,16 +32,17 @@ const main = async () => {
   await conn.initialize().catch((error) => console.log(error));
 
   const app = express();
+  const port = process.env.PORT || "4000";
 
   // Post.delete({});
   // User.delete({});
 
   let RedisStore = connectRedis(session);
-  const redis = new Redis();
+  const redis = new Redis(process.env.REDIS_URL as string);
 
   app.use(
     cors({
-      origin: "http://localhost:3000",
+      origin: "http://zameal.vercel.com",
       credentials: true,
     })
   );
@@ -57,7 +58,7 @@ const main = async () => {
         sameSite: "lax",
       },
       saveUninitialized: false,
-      secret: "ksjhdkfjhkjshfhks",
+      secret: process.env.SECRET || "",
       resave: false,
     })
   );
@@ -79,8 +80,8 @@ const main = async () => {
     res.send("root");
   });
 
-  app.listen(4000, () => {
-    console.log("server started on localhost:4000");
+  app.listen(port, () => {
+    console.log(`server started on localhost:${port}`);
   });
 };
 
