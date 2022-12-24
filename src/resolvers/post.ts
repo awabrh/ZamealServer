@@ -4,24 +4,24 @@ import {
   Query,
   Arg,
   Mutation,
-  Field,
-  ObjectType,
+  // Field,
+  // ObjectType,
   Ctx,
 } from "type-graphql";
-import { FieldError } from "./FieldError";
+// import { FieldError } from "./FieldError";
 import { AddTarheelInput } from "./AddTarheelInput";
 import { myContext } from "src/types";
 import { User } from "../entities/User";
 import { Like } from "typeorm";
 
-@ObjectType()
-class PostResponse {
-  @Field(() => [FieldError], { nullable: true })
-  errors?: FieldError[];
+// @ObjectType()
+// class PostResponse {
+//   @Field(() => [FieldError], { nullable: true })
+//   errors?: FieldError[];
 
-  @Field(() => Post, { nullable: true })
-  post?: Post;
-}
+//   @Field(() => Post, { nullable: true })
+//   post?: Post;
+// }
 
 @Resolver()
 export class PostResolver {

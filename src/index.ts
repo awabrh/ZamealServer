@@ -15,16 +15,18 @@ import { myContext } from "./types";
 import { DataSource } from "typeorm";
 import { Post } from "./entities/Post";
 import { User } from "./entities/User";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 const main = async () => {
   const conn = new DataSource({
     type: "postgres",
-    database: "zameal2",
-    username: "postgres",
-    password: "postgres",
+    url: process.env.POSTGRES_URL,
     logging: true,
     synchronize: true,
     entities: [Post, User],
+    connectTimeoutMS: 0,
+    ssl: false,
   });
 
   await conn.initialize().catch((error) => console.log(error));

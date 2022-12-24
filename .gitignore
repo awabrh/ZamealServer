@@ -3,3 +3,5 @@
 /dump.rdb
 dump.rdb
 server.code-workspace
+.env
+environment.d.ts
