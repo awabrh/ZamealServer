@@ -42,7 +42,7 @@ const main = async () => {
 
   app.use(
     cors({
-      origin: "http://zameal.vercel.com",
+      origin: "http://zameal.vercel.app",
       credentials: true,
     })
   );
@@ -70,6 +70,7 @@ const main = async () => {
     }),
     context: ({ req, res }): myContext => ({ req, res, redis }),
     plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
+    cache: "bounded",
   });
 
   await apolloServer.start();
