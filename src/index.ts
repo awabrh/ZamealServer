@@ -83,6 +83,7 @@ const main = async () => {
 
   app.listen(port, () => {
     console.log(`server started on localhost:${port}`);
+    console.log("allowed origin:", process.env.ORIGIN);
   });
 };
 
