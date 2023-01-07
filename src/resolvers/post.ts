@@ -59,18 +59,21 @@ export class PostResolver {
     let post;
     let user: User | null;
 
-    // try {
-    user = await User.findOneBy({ id: req.session.userId });
-    // } catch (error) {
-    //   return {
-    //     errors: [
-    //       {
-    //         field: "name",
-    //         message: "unknown error",
-    //       },
-    //     ],
-    //   };
-    // }
+    try {
+      user = await User.findOneBy({ id: req.session.userId });
+      // } catch (error) {
+      //   return {
+      //     errors: [
+      //       {
+      //         field: "name",
+      //         message: "unknown error",
+      //       },
+      //     ],
+      //   };
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
 
     try {
       post = Post.create({
@@ -86,6 +89,7 @@ export class PostResolver {
         user: user ? user : undefined,
       }).save();
     } catch (error) {
+      console.log(error);
       return null;
       // return {
       //   errors: [
