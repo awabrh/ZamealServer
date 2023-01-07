@@ -114,6 +114,7 @@ export class UserResolver {
   @Query(() => User, { nullable: true })
   me(@Ctx() { req }: myContext) {
     if (!req.session.userId) {
+      console.log("couldn't read session");
       return null;
     }
     const user = User.findOne({
@@ -122,6 +123,7 @@ export class UserResolver {
     });
     console.log(user);
     return user;
+    //
   }
 
   @Mutation(() => UserResponse)
@@ -207,7 +209,12 @@ export class UserResolver {
       };
     }
 
-    req.session.userId = user.id;
+    try {
+      req.session.userId = user.id;
+      console.log("session recorded");
+    } catch (error) {
+      console.log(error);
+    }
 
     return {
       user: user,

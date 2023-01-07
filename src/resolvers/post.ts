@@ -116,10 +116,21 @@ export class PostResolver {
   }
 
   @Mutation(() => Boolean)
-  async deletePost(@Arg("id") id: number): Promise<boolean> {
+  async deletePost(
+    @Arg("id") id: number,
+    @Ctx() { req }: myContext
+  ): Promise<boolean> {
     try {
-      await Post.delete({ id });
-      return true;
+      const user = await User.findOne({
+        where: { id: req.session.userId },
+        relations: { post: true },
+      });
+      if (user && user.post?.id === id) {
+        await Post.delete({ id });
+        return true;
+      } else {
+        return false;
+      }
     } catch (error) {
       return false;
     }
