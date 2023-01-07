@@ -48,9 +48,9 @@ export class User extends BaseEntity {
   @Column({ type: "text" })
   password!: string;
 
-  @Field(() => Post)
+  @Field(() => Post, { nullable: true })
   @OneToOne(() => Post, (post) => post.user)
-  post: Post;
+  post?: Post;
 
   @Field(() => String)
   @CreateDateColumn()
