@@ -142,6 +142,7 @@ export class UserResolver {
     try {
       user = await User.create({
         name: options.name,
+        college: options.college,
         dep: options.dep,
         batch: options.batch,
         address: options.address,
@@ -187,7 +188,7 @@ export class UserResolver {
     @Ctx() { req }: myContext
   ): Promise<UserResponse> {
     const user = await User.findOne({
-      where: { email: options.email },
+      where: { email: options.email.toLocaleLowerCase() },
       relations: { post: true },
     });
     if (!user) {

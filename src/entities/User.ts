@@ -22,8 +22,20 @@ export class User extends BaseEntity {
   email!: string;
 
   @Field()
+  @Column({ nullable: false, type: "boolean", default: false })
+  confirmed: boolean;
+
+  @Field()
   @Column({ nullable: true })
   name: string;
+
+  @Field()
+  @Column({ nullable: true, default: "University Of Khartoum" })
+  uni: string;
+
+  @Field()
+  @Column({ nullable: true })
+  college: string;
 
   @Field()
   @Column({ nullable: true })

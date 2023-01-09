@@ -6,6 +6,9 @@ export class FullRegisterInput {
   name: string;
 
   @Field()
+  college: string;
+
+  @Field()
   dep: string;
 
   @Field()
