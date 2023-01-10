@@ -7,12 +7,13 @@ import {
   // Field,
   // ObjectType,
   Ctx,
+  Int,
 } from "type-graphql";
 // import { FieldError } from "./FieldError";
 import { AddTarheelInput } from "./AddTarheelInput";
 import { myContext } from "src/types";
 import { User } from "../entities/User";
-import { Like } from "typeorm";
+import { FindOptionsWhere, LessThan, Like } from "typeorm";
 
 // @ObjectType()
 // class PostResponse {
@@ -27,17 +28,35 @@ import { Like } from "typeorm";
 export class PostResolver {
   @Query(() => [Post])
   async posts(
+    @Arg("limit", () => Int) limit: number,
+    @Arg("offset", () => Int, { nullable: true }) offset: number | null,
     @Arg("location", { nullable: true }) location: string
   ): Promise<Post[]> {
+    const realLimit = Math.min(50, limit);
     let posts;
+    var whereClause:
+      | FindOptionsWhere<Post>
+      | FindOptionsWhere<Post>[]
+      | undefined;
+    var skipClause: number | undefined;
     if (location) {
-      posts = Post.find({
-        where: { locations: Like(`%${location}%`) },
-        relations: { user: true },
-      });
-    } else {
-      posts = Post.find({ relations: { user: true } });
+      whereClause = { ...whereClause, locations: Like(`%${location}%`) };
     }
+
+    if (offset) {
+      skipClause = offset;
+    }
+
+    posts = Post.find({
+      where: whereClause,
+      relations: { user: true },
+      order: {
+        updatedAt: "DESC",
+      },
+      skip: skipClause,
+      take: realLimit,
+    });
+
     return posts;
   }
 
