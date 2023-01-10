@@ -8,12 +8,14 @@ import {
   // ObjectType,
   Ctx,
   Int,
+  ObjectType,
+  Field,
 } from "type-graphql";
 // import { FieldError } from "./FieldError";
 import { AddTarheelInput } from "./AddTarheelInput";
 import { myContext } from "src/types";
 import { User } from "../entities/User";
-import { FindOptionsWhere, LessThan, Like } from "typeorm";
+import { FindOptionsWhere, Like } from "typeorm";
 
 // @ObjectType()
 // class PostResponse {
@@ -24,16 +26,24 @@ import { FindOptionsWhere, LessThan, Like } from "typeorm";
 //   post?: Post;
 // }
 
+@ObjectType()
+class PostsResponse {
+  @Field(() => [Post], { nullable: false })
+  posts: Post[];
+
+  @Field(() => Int, { nullable: false })
+  count: number;
+}
+
 @Resolver()
 export class PostResolver {
-  @Query(() => [Post])
+  @Query(() => PostsResponse)
   async posts(
     @Arg("limit", () => Int) limit: number,
     @Arg("offset", () => Int, { nullable: true }) offset: number | null,
     @Arg("location", { nullable: true }) location: string
-  ): Promise<Post[]> {
+  ): Promise<PostsResponse> {
     const realLimit = Math.min(50, limit);
-    let posts;
     var whereClause:
       | FindOptionsWhere<Post>
       | FindOptionsWhere<Post>[]
@@ -47,7 +57,7 @@ export class PostResolver {
       skipClause = offset;
     }
 
-    posts = Post.find({
+    const result = await Post.findAndCount({
       where: whereClause,
       relations: { user: true },
       order: {
@@ -57,7 +67,10 @@ export class PostResolver {
       take: realLimit,
     });
 
-    return posts;
+    return {
+      posts: result[0],
+      count: result[1],
+    };
   }
 
   @Query(() => Post, { nullable: true })
