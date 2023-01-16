@@ -16,6 +16,7 @@ import { PostgresDataSource } from "./dataSource";
 
 const main = async () => {
   await PostgresDataSource.initialize().catch((error) => console.log(error));
+  await PostgresDataSource.runMigrations();
 
   const app = express();
   const port = process.env.PORT || "4000";
