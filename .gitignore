@@ -4,4 +4,5 @@
 dump.rdb
 server.code-workspace
 .env
+.env.*
 environment.d.ts
