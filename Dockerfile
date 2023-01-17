@@ -13,8 +13,6 @@ RUN npm install
 # Bundle app source
 COPY . .
 
-COPY .env.production .env
-
 RUN npm build
 
 ENV NODE_ENV=production
