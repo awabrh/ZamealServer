@@ -8,7 +8,7 @@ import {
   OneToOne,
   JoinColumn,
 } from "typeorm";
-import { ObjectType, Field, Int } from "type-graphql";
+import { ObjectType, Field, Int, Float } from "type-graphql";
 import { User } from "./User";
 
 @ObjectType()
@@ -38,7 +38,7 @@ export class Post extends BaseEntity {
   @Column({ type: "text", nullable: false })
   locations: string;
 
-  @Field(() => Int)
+  @Field(() => Float)
   @Column({ type: "text", nullable: false })
   price: number;
 
