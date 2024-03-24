@@ -13,8 +13,12 @@ import { PostResolver } from "./resolvers/post";
 import { UserResolver } from "./resolvers/user";
 import { myContext } from "./types";
 import { PostgresDataSource } from "./dataSource";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 const main = async () => {
+  console.log(process.env.DATABASE_URL);
+
   await PostgresDataSource.initialize().catch((error) => console.log(error));
   await PostgresDataSource.runMigrations();
 
